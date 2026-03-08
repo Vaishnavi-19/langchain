@@ -1,55 +1,67 @@
-# Ollama + LangChain Example
+## LangSmith Monitoring & Tracing (LangSmith README)
 
-This repository demonstrates how to use **Ollama** (a local LLM runtime) together with the **LangChain** ecosystem.
+LangSmith is a monitoring and observability dashboard for LLM workflows, builds, and runs. It lets you see your LLM calls, prompts, outputs, and metadata in a centralized UI.
 
-## Using Ollama (Local LLM)
+### 🧠 What LangSmith provides
 
-Ollama lets you run models locally without requiring a remote API key.
+- **Run-level tracing**: See each execution of the model with full input/output and timing data.
+- **Project organization**: Group runs under a project name (e.g., `Summarization-with-Ollama`).
+- **Search and filtering**: Find runs by prompt, run type, tags, or timestamps.
+- **Run playback**: Inspect each step of a chain/run and dive into individual tool calls.
 
-### 1) Install Ollama
+### 🚀 How to use it in this repo
 
-- **Windows/macOS/Linux (recommended):** Download the installer from https://ollama.com and follow the instructions.
-- **Linux (alternative):** Use the package manager commands from the Ollama docs.
+1. Add your API key and project name in `.env`:
 
-After installation, verify it works:
+   ```env
+   LANGSMITH_API_KEY=<your_key_here>
+   LANGSMITH_PROJECT=Summarization-with-Ollama
+   ```
 
-```bash
-ollama --help
-```
+2. Run the sample script:
 
-### 2) Pull a model
+   ```bash
+   ./.venv/Scripts/python.exe main.py
+   ```
 
-```bash
-ollama pull llama2
-```
+3. Open LangSmith and locate your project:
 
-### 3) Install the LangChain Ollama integration
+   - It should appear under the project name you set in `.env`.
+   - You should see at least one run with input prompt + output summary.
 
-```bash
-pip install langchain-ollama
-```
+### 🖼️ Sample dashboard screenshots
 
-### 4) Use Ollama in LangChain
+> _(Replace these placeholders with actual screenshots if you want to include real images.)_
 
-```python
-from langchain.llms import Ollama
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+![LangSmith Project View](https://via.placeholder.com/900x400?text=LangSmith+Project+Dashboard)
 
-llm = Ollama(model="llama2")
+![LangSmith Run Detail](https://via.placeholder.com/900x400?text=LangSmith+Run+Detail+View)
 
-prompt = PromptTemplate(
-    input_variables=["topic"],
-    template="Write a short summary about {topic}."
-)
+---
 
-chain = LLMChain(llm=llm, prompt=prompt)
-result = chain.run(topic="artificial intelligence")
-print(result)
-```
+## Troubleshooting
 
-> **Tip:** If you encounter issues, ensure the Ollama daemon is running (e.g., `ollama server` or `ollama run`), and that the model is downloaded.
+### 1) Project does not show up in LangSmith
 
-## License
+- Verify `LANGSMITH_API_KEY` is set and valid.
+- Ensure `main.py` ran successfully and printed: `Logged run to LangSmith project:`.
+- Confirm you are looking at the correct workspace/account in the LangSmith UI.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### 2) No runs appear in the project
+
+- Make sure `main.py` executed the run logging section (it only logs if `LANGSMITH_API_KEY` is present).
+- Look for any errors printed by the script (e.g., network or authentication errors).
+
+### 3) Runs show but the data looks incomplete
+
+- Confirm the script sent `inputs` and `outputs` in `create_run()`.
+- If you see empty values, verify that the model returned text and the script captured it.
+
+### 4) “API key invalid” or “Unauthorized” errors
+
+- Regenerate the API key from the LangSmith dashboard.
+- Ensure there are no extra spaces/newlines in `.env`.
+
+---
+
+If you want, I can also add a small “How to capture and share a run link” section so you can easily share a trace with teammates.
